@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang    -o CMakeFiles/simple-container.dir/src/main.c.o -c /home/tymoteusz/Projects/simple-container/src/main.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/main.c",
+  "output": "CMakeFiles/simple-container.dir/src/main.c.o"
+}
+]
