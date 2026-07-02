@@ -1,8 +1,32 @@
 [
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang    -o CMakeFiles/simple-container.dir/src/main.c.o -c /home/tymoteusz/Projects/simple-container/src/main.c",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/main.c.o -c /home/tymoteusz/Projects/simple-container/src/main.c",
   "file": "/home/tymoteusz/Projects/simple-container/src/main.c",
   "output": "CMakeFiles/simple-container.dir/src/main.c.o"
+},
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/dispacher.c.o -c /home/tymoteusz/Projects/simple-container/src/dispacher.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/dispacher.c",
+  "output": "CMakeFiles/simple-container.dir/src/dispacher.c.o"
+},
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/commands_registry.c.o -c /home/tymoteusz/Projects/simple-container/src/commands_registry.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/commands_registry.c",
+  "output": "CMakeFiles/simple-container.dir/src/commands_registry.c.o"
+},
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/commands/run.c.o -c /home/tymoteusz/Projects/simple-container/src/commands/run.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/commands/run.c",
+  "output": "CMakeFiles/simple-container.dir/src/commands/run.c.o"
+},
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/commands/create.c.o -c /home/tymoteusz/Projects/simple-container/src/commands/create.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/commands/create.c",
+  "output": "CMakeFiles/simple-container.dir/src/commands/create.c.o"
 }
 ]

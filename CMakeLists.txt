@@ -5,4 +5,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(simple-container)
 
-add_executable(simple-container src/main.c)
+include_directories(simple-container include)
+
+add_executable(simple-container src/main.c src/dispacher.c src/commands_registry.c src/commands/run.c src/commands/create.c)
