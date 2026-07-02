@@ -11,19 +11,14 @@
 #include <fcntl.h>
 
 #include "dispacher.h"
-
-#define CMD_COUNT (sizeof(cmds)/sizeof(cmds[0]))
-
-
-extern command cmds[2];
-
+#include "commands_registry.h"
 
 void print_help(const char* const msg)
 {
     puts(msg);
     for (int i = 0; i < CMD_COUNT; ++i)
     {
-        printf("%s\n", cmds[i].name);
+        printf("%s\n", cmds[i]->name);
     }
 }
 

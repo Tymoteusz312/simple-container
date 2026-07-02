@@ -3,9 +3,12 @@
 #include "commands/run.h"
 #include "commands/create.h"
 
-command cmds[] = 
+extern command run_command;
+extern command create_command;
+
+command* cmds[] = 
 {
-    {"run", run_handler, run_parser},
-    {"create", create_handler, create_parser}
+    &run_command,
+   &create_command
 };
 const unsigned long long CMD_COUNT = sizeof(cmds)/sizeof(cmds[0]);
