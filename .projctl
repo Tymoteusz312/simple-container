@@ -1,4 +1,4 @@
 NAME="simple-container"
-BUILD="cmake . && cmake --build build"
+BUILD="cmake . && cmake --build build && mv build/simple-container build/sc"
 RUN="./build/simple-container"
 CLEAN="rm -rf build"
