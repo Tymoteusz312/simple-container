@@ -12,6 +12,7 @@
 
 #include "dispacher.h"
 #include "commands_registry.h"
+#include "core.h"
 
 void print_help(const char* const msg)
 {
@@ -29,26 +30,15 @@ int main(int argc, char** argv)
     {
         print_help("Usage: simple-contener <command> [OPTIONS...]\nCommands:");
         return 1;
-    }
+    } 
 
-    int cmd_idx = find_cmd(argv[1]);
-
-    if (cmd_idx < 0)
+    context ctx = make_ctx(argc, argv);
+    
+    if (find_cmd(&ctx))
     {
-        print_help("Unknown command. Commands:");
+        fprintf(stderr, "Command %s not found\n", argv[1]);
         return 1;
     }
-    
-    uint8_t storage[256];
-
-    context ctx = 
-    {
-        cmd_idx,
-        argc,
-        argv,
-        2,
-        storage
-    };
 
     if (parse_opt(&ctx))
         return 1;

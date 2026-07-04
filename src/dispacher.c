@@ -6,14 +6,19 @@
 #include <string.h>
 #include <stdio.h>
 
-int find_cmd(const char* const cmd)
+int find_cmd(context* ctx)
 {
     for (int i = 0; i < CMD_COUNT; ++i)
     {
-        if (strcmp(cmd, cmds[i]->name) == 0)
-            return i;
+        if (strcmp(ctx->argv[1], cmds[i]->name) == 0)
+        {
+            ctx->cmd = cmds[i]; 
+            ctx->options = cmds[i]->options;
+            ctx->options_size = cmds[i]->option_count;
+            return 0;
+        }
     }
-    return -1;
+    return 1;
 }
 
 int parse_opt(context* ctx)
@@ -24,19 +29,28 @@ int parse_opt(context* ctx)
         return 1;
     }
 
+    if (ctx->cmd == NULL)
+    {
+        fprintf(stderr, "[ DEBUG: parse_opt(context* ctx) ] ctx->cmd = NULL | Call find_cmd(context* ctx) first");
+        return 1;
+    }
+
 
     token tokens[ctx->argc-ctx->start]; 
-    int tokens_size = 0;
 
-    lex_args(ctx, tokens, &tokens_size);
+    ctx->tokens = tokens;
+    ctx->tokens_size = 0;
+    
+    lex_args(ctx);
 
+    ctx->cmd->parser(ctx);
 
+    ctx->tokens = NULL;
 
-    cmds[ctx->cmd_idx]->parser(tokens, tokens_size, (void*)(ctx->data));
     return 0;
 }
 
 int execute_cmd(context* ctx)
 {
-    return cmds[ctx->cmd_idx]->handler(ctx->data);
+    return ctx->cmd->handler(ctx);
 }

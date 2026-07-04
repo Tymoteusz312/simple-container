@@ -7,4 +7,4 @@ project(simple-container)
 
 include_directories(simple-container include)
 
-add_executable(simple-container src/main.c src/dispacher.c src/commands_registry.c src/commands/run.c src/commands/create.c src/opt_parser.c)
+add_executable(simple-container src/main.c src/dispacher.c src/commands_registry.c src/commands/run.c src/commands/create.c src/opt_parser.c src/core.c)

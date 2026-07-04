@@ -34,35 +34,6 @@ int is_argument(const char *const str)
     return 0;
 }
 
-// char* find_opt(option* opt, const context* ctx, char* def, parse_result* err)
-// {
-//     char** arr = ctx->argv;
-//     for (int i = ctx->start; i < ctx->argc; ++i)
-//     {
-//         if (is_long_opt(arr[i]) && strcmp(arr[i]+2, opt->long_str) == 0)
-//         {
-//             if (i+1 < ctx->argc && is_argument(arr[i+1]))
-//                 return arr[i+1]; // Puzniej tutaj trzeba bedzie parsowac typ
-//             else
-//             {
-//                 *err = OPT_MISSING_VALUE;
-//                 return def;
-//             }
-//         }
-//         else if (is_short_opt(arr[i]) && strcmp(arr[i]+1, opt->short_str) == 0)
-//         {
-//             if (i+1 < ctx->argc && is_argument(arr[i+1]))
-//                 return arr[i+1];
-//             else
-//             {
-//                 *err = OPT_MISSING_VALUE;
-//                 return def;
-//             }
-//         }
-//     }
-//     return def;
-// }
-
 int find_opt(const option* opt, token* tokens, int tokens_size)
 {
     if (tokens == NULL)
@@ -157,33 +128,96 @@ int parse_int(const char* str)
     return number;
 }
 
-
-int lex_args(const context* ctx, token* tokens, int* tokens_size)
+int exist_opt(token token, const option* opt_table, int opt_size_tab)
 {
+    for (int i = 0; i < opt_size_tab; ++i)
+    {
+        if (token.type == LONG_OPT_TOKEN &&
+            strcmp(opt_table[i].long_str, token.str) == 0|| 
+            token.type == SHORT_OPT_TOKEN &&
+            strcmp(opt_table[i].short_str, token.str) == 0)
+            return i;
+    }
+
+    return -1;
+
+}
+
+int get_positionals(context* ctx, token* output)
+{
+    int idx = 0;
+    for (int i = 0; i < ctx->tokens_size; ++i)
+    {
+        if (ctx->tokens[i].type == POSITIONAL_TOKEN)
+            output[idx++] = ctx->tokens[i];
+
+        printf("Token: %s o typie %d\n", ctx->tokens[i].str, ctx->tokens[i].type);
+
+    }
+    return 0;
+}
+
+int lex_args(context* ctx)
+{
+    token* tokens = ctx->tokens;
+    int* tokens_size = &ctx->tokens_size;
+    const option* opt_table = ctx->options;
+    int opt_tab_size = ctx->options_size;
+
+
+    if (tokens == NULL || tokens_size == NULL || opt_table == NULL)
+        return -1;
+
     char** arr = ctx->argv;
+    
+    *tokens_size = 0;
+    int last_opt_idx = -1;
+
     for (int i = ctx->start; i < ctx->argc; ++i)
     {
-        token_type type;
-        int dashes=0;
+        token token;
         if (is_long_opt(arr[i]))
         {
-            type = LONG_OPT_TOKEN;
-            dashes = 2;
+            token.str = arr[i]+2;
+            token.type = LONG_OPT_TOKEN;
         }
         else if (is_short_opt(arr[i]))
         {
-            type = SHORT_OPT_TOKEN;
-            dashes = 1;
+            token.str = arr[i]+1;
+            token.type = SHORT_OPT_TOKEN;
         }
-        else 
+        else
+        {    
+            token.str = arr[i];
+
+            if (last_opt_idx < 0) 
+            {
+                token.type = POSITIONAL_TOKEN;
+                ctx->positional_count++;
+            }
+            else if (opt_table[last_opt_idx].takes_value)
+                token.type = ARG_TOKEN;
+            else
+            {
+                token.type = POSITIONAL_TOKEN;
+                ctx->positional_count++;
+            }
+            
+            last_opt_idx = -1;
+            tokens[(*tokens_size)++] = token;
+            continue;
+        }
+
+        last_opt_idx = exist_opt(token, opt_table, opt_tab_size);
+        if (last_opt_idx < 0)
         {
-            type = ARG_TOKEN;
-            dashes = 0;
+            fprintf(stderr, "Option %s doesn't exist\n", arr[i]);
+            exit(1);
         }
-        tokens[i-ctx->start] = (token){ arr[i] + dashes, type};
-        ++(*tokens_size);
+        else
+            tokens[(*tokens_size)++] = token;
     }
-    return 1; 
+    return 0;
 }
 
 int opt_int(const char* val, int def)

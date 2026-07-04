@@ -6,7 +6,8 @@ typedef enum
 {
     LONG_OPT_TOKEN,
     SHORT_OPT_TOKEN,
-    ARG_TOKEN
+    ARG_TOKEN,
+    POSITIONAL_TOKEN
 }token_type;
 
 struct token
@@ -15,9 +16,10 @@ struct token
     token_type type;
 };
 
-int lex_args(const context* ctx, token* tokens, int* tokensSize);
+int lex_args(context* ctx);
 const char* get_val(const option opt, token* tokens, int tokens_size);
 int get_flag(const option opt, token* tokens, int tokens_size);
+int get_positionals(context* ctx, token* output);
 int parse_int(const char* str);
 
 int opt_int(const char* val, int def);

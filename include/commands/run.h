@@ -2,5 +2,5 @@
 
 #include "types.h"
 
-int run_parser(struct token* tokens, int tokens_size, void* out);
-int run_handler(void* opt_spec);
+int run_parser(context* ctx);
+int run_handler(context* ctx);
