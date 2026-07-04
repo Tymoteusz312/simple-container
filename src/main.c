@@ -38,6 +38,8 @@ int main(int argc, char** argv)
         print_help("Unknown command. Commands:");
         return 1;
     }
+    
+    uint8_t storage[256];
 
     context ctx = 
     {
@@ -45,7 +47,7 @@ int main(int argc, char** argv)
         argc,
         argv,
         2,
-        NULL
+        storage
     };
 
     if (parse_opt(&ctx))

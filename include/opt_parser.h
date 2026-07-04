@@ -1,19 +1,32 @@
 #pragma once
-#include "core.h"
 
-typedef struct
+#include "types.h"
+
+typedef enum
 {
-    enum
-    {
-        LONG_OPT,
-        SHORT_OPT,
-        ARG,
-        SIZE
-    } type;
+    LONG_OPT_TOKEN,
+    SHORT_OPT_TOKEN,
+    ARG_TOKEN
+}token_type;
 
-    int idx;
-    
-}token;
+struct token
+{
+    const char* str;
+    token_type type;
+};
+
+int lex_args(const context* ctx, token* tokens, int* tokensSize);
+const char* get_val(const option opt, token* tokens, int tokens_size);
+int get_flag(const option opt, token* tokens, int tokens_size);
+int parse_int(const char* str);
+
+int opt_int(const char* val, int def);
+const char* opt_str(const char* val, const char* def);
+
+int is_long_opt(const char* const str);
+int is_short_opt(const char* const str);
+int is_argument(const char* const str);
+
+// char* find_opt(option* opt, const context* ctx, char* def, parse_result* err);
 
 
-int tokenize(context* ctx);

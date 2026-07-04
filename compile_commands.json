@@ -28,5 +28,11 @@
   "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/commands/create.c.o -c /home/tymoteusz/Projects/simple-container/src/commands/create.c",
   "file": "/home/tymoteusz/Projects/simple-container/src/commands/create.c",
   "output": "CMakeFiles/simple-container.dir/src/commands/create.c.o"
+},
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include  -o CMakeFiles/simple-container.dir/src/opt_parser.c.o -c /home/tymoteusz/Projects/simple-container/src/opt_parser.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/opt_parser.c",
+  "output": "CMakeFiles/simple-container.dir/src/opt_parser.c.o"
 }
 ]

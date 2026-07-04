@@ -1,36 +1,32 @@
 #pragma once
 
-typedef struct
+#include "types.h"
+
+struct context
 {
     int cmd_idx;
     int argc;
     char** argv;
     int start;
     void* data;
-} context;
+} ;
 
-typedef struct
+struct option
 {
-    char* str;
-    enum
-    {
-        SHORT_OPT,
-        LONG_OPT,
-        FLAG,
-        POSITIONAL,
-        SIZE
-    } type;
+    const char* const long_str;
+    const char* const short_str;
+    int takes_value; 
     char* description;
-} option;
+} ;
 
-typedef int(*cmd_handler)(context*);
-typedef int(*options_parser)(context*);
+typedef int(*cmd_handler)(void* opt_spec);
+typedef int(*options_parser)(token* tokens, int tokens_size, void* out);
 
-typedef struct
+struct command
 {
     const char* name;
     cmd_handler handler;
     options_parser parser;
     const option* options;
     int option_count;
-} command;
+} ;
