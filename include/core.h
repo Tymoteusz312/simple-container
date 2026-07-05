@@ -2,6 +2,7 @@
 
 #include "types.h"
 
+#define MAX_POSITIONALS 64
 #define MAX_TOKENS 64
 #define MAX_DATA 256
 
@@ -19,7 +20,9 @@ struct context
     option* options;
     int options_size;
 
+    char* positionals[MAX_POSITIONALS];
     int positional_count;
+    int current_positional;
 
     unsigned char* data[MAX_DATA];
      
@@ -43,6 +46,7 @@ struct command
     options_parser parser;
     option* options;
     int option_count;
+    int positional_count;
 } ;
 
 context make_ctx(int argc, char** argv);

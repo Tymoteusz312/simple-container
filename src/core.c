@@ -14,6 +14,8 @@ context make_ctx(int argc, char **argv)
         0,
         NULL,
         0,
+        {},
+        0,
         0,
         {}
     };

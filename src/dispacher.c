@@ -43,7 +43,15 @@ int parse_opt(context* ctx)
     
     lex_args(ctx);
 
-    ctx->cmd->parser(ctx);
+    if (ctx->positional_count < ctx->cmd->positional_count)
+    {
+        fprintf(stderr, "Too few arguments for command %s.\nCommand %s requires %d arguments",
+                ctx->cmd->name, ctx->cmd->name, ctx->cmd->positional_count);
+        return 1;
+    }
+
+    if (ctx->cmd->parser(ctx))
+        return 1;
 
     ctx->tokens = NULL;
 

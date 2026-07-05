@@ -1,27 +1,39 @@
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
+#include <signal.h>
 #include "commands/run.h"
 
 #include "core.h"
 #include "opt_parser.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <unistd.h>
+#include <sched.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+
+#define STACK_SIZE (1024 * 1024)
 
 typedef struct 
 {
     const char* name;
-    int count;
-
-    int test_opt;
-    const char* image_opt;
-    int iflag;
-    
-    
+    const char* args_opt;
 } run_opt_t;
 
 option run_options[] = 
 {
-    {"test", "t", 1, "Test option"},
-    {"image", "m", 1, "Image option"},
-    {"interactive", "i", 0, "Test flag"}
+    {"args", "a", 1, "Arguments to pass to a new process"},
+};
+
+enum run_options_types
+{
+    ARGS_OPT = 0,
 };
 
 const command run_command=
@@ -30,7 +42,8 @@ const command run_command=
     run_handler,
     run_parser,
     &run_options[0],
-    sizeof(run_options)/sizeof(run_options[0])
+    sizeof(run_options)/sizeof(run_options[0]),
+    1
 };
 
 int run_parser(context* ctx)
@@ -42,20 +55,35 @@ int run_parser(context* ctx)
 
     run_opt_t* opt = (run_opt_t*)(ctx->data);
 
-    opt->test_opt = opt_int(get_val(run_options[0], tokens, tokens_size), 10);
-    opt->image_opt = opt_str(get_val(run_options[1], tokens, tokens_size), "alpine");
-    opt->iflag = get_flag(run_options[2], tokens, tokens_size);
-
-    token positionals[ctx->positional_count];
-
-    get_pos(ctx, positionals);
+    opt->args_opt = opt_str(ctx, ARGS_OPT, "");
     
-    opt->name = positionals[0].str;
-    opt->count = parse_int(positionals[1].str);
+    opt->name = pos_str(ctx);
 
     puts("Parsowanie run zakonczone");
     return 0;
 }
+
+
+int child_fn(void* arg)
+{
+    run_opt_t* opt = arg;
+
+    const char* const name = "container";
+
+    sethostname(name, strlen(name));
+
+    mkdir("/proc", 0555);
+
+    mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL);
+    mount("proc", "/proc", "proc", 0, NULL);
+
+
+    execvp(opt->name, NULL);
+
+    perror("execvp");
+    _exit(1);
+}
+
 
 int run_handler(context* ctx)
 {
@@ -63,11 +91,24 @@ int run_handler(context* ctx)
 
     run_opt_t* opt = (run_opt_t*)(ctx->data);
 
-    printf("Opcja test ustawiona na wartosc: %d\n", opt->test_opt);
-    printf("Opcja image ustawiona na wartosc: %s\n", opt->image_opt);
-    printf("Opcja interactive ustawiona na wartosc %d\n", opt->iflag);
+    printf("Opcja test ustawiona na wartosc: %s\n", opt->args_opt);
     printf("Argument name jest ustawiony na wartosc %s\n", opt->name);
-    printf("Argument count jest ustawionny na wartosc %d\n", opt->count);
+
+
+    char* stack = malloc(STACK_SIZE);
+    char* stack_top = stack + STACK_SIZE;
+
+    pid_t pid = clone(child_fn, stack_top, CLONE_NEWUSER | CLONE_NEWUTS | CLONE_NEWNS | SIGCHLD, opt);
+
+    if (pid == -1)
+    {
+        perror("clone");
+        return 1;
+    }
+
+    int status;
+    waitpid(pid, &status, 0);
+    printf("Dziecko zakonczylo ze statusem %d\n", status);
 
     puts("Run handler ends");
 

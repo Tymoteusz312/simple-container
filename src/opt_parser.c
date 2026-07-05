@@ -69,8 +69,13 @@ const char* get_arg(int opt_idx, token* tokens, int tokens_size)
     return tokens[opt_idx+1].str;
 }
 
-const char* get_val(const option opt, token* tokens, int tokens_size)
+const char* get_val(context* ctx, int opt_idx)
 {
+    token* tokens = ctx->tokens;
+    int tokens_size = ctx->tokens_size;
+    option opt = ctx->options[opt_idx];
+
+
     if (!opt.takes_value)
     {
         perror("[DEBUG] get_val can be used only on options with arguments");
@@ -91,8 +96,12 @@ const char* get_val(const option opt, token* tokens, int tokens_size)
     return arg;
 }
 
-int get_flag(const option opt, token* tokens, int tokens_size)
+int opt_flag(context* ctx, int opt_idx)
 {
+    token* tokens = ctx->tokens;
+    int tokens_size = ctx->tokens_size;
+    option opt = ctx->options[opt_idx];
+
     if (opt.takes_value)
     {
         perror("[DEBUG] get_flag can be used only on flags");
@@ -140,21 +149,6 @@ int exist_opt(token token, const option* opt_table, int opt_size_tab)
     }
 
     return -1;
-
-}
-
-int get_positionals(context* ctx, token* output)
-{
-    int idx = 0;
-    for (int i = 0; i < ctx->tokens_size; ++i)
-    {
-        if (ctx->tokens[i].type == POSITIONAL_TOKEN)
-            output[idx++] = ctx->tokens[i];
-
-        printf("Token: %s o typie %d\n", ctx->tokens[i].str, ctx->tokens[i].type);
-
-    }
-    return 0;
 }
 
 int lex_args(context* ctx)
@@ -193,14 +187,14 @@ int lex_args(context* ctx)
             if (last_opt_idx < 0) 
             {
                 token.type = POSITIONAL_TOKEN;
-                ctx->positional_count++;
+                ctx->positionals[ctx->positional_count++] = arr[i];
             }
             else if (opt_table[last_opt_idx].takes_value)
                 token.type = ARG_TOKEN;
             else
             {
                 token.type = POSITIONAL_TOKEN;
-                ctx->positional_count++;
+                ctx->positionals[ctx->positional_count++] = arr[i];
             }
             
             last_opt_idx = -1;
@@ -220,12 +214,24 @@ int lex_args(context* ctx)
     return 0;
 }
 
-int opt_int(const char* val, int def)
+int opt_int(context* ctx, int opt_idx, int def)
 {
+    const char* val = get_val(ctx, opt_idx);
     return val ? parse_int(val) : def;
 }
 
-const char* opt_str(const char* val, const char* def)
+const char* opt_str(context* ctx, int opt_idx, const char* def)
 {
+    const char* val = get_val(ctx, opt_idx);
     return val ? val : def;
+}
+
+const char* pos_str(context* ctx)
+{
+    return ctx->positionals[ctx->current_positional++];
+}
+
+int pos_int(context* ctx)
+{
+    return parse_int(ctx->positionals[ctx->current_positional++]);
 }
