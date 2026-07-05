@@ -1,22 +1,22 @@
+#include "request_type.h"
 #define _GNU_SOURCE
 #define _DEFAULT_SOURCE
-#include <signal.h>
 #include "commands/run.h"
 
 #include "core.h"
 #include "opt_parser.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <unistd.h>
 #include <sched.h>
 #include <sys/wait.h>
-#include <signal.h>
 #include <sys/types.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
+
+#include "runtime/runtime.h"
 
 #define STACK_SIZE (1024 * 1024)
 
@@ -91,24 +91,16 @@ int run_handler(context* ctx)
 
     run_opt_t* opt = (run_opt_t*)(ctx->data);
 
-    printf("Opcja test ustawiona na wartosc: %s\n", opt->args_opt);
-    printf("Argument name jest ustawiony na wartosc %s\n", opt->name);
-
-
-    char* stack = malloc(STACK_SIZE);
-    char* stack_top = stack + STACK_SIZE;
-
-    pid_t pid = clone(child_fn, stack_top, CLONE_NEWUSER | CLONE_NEWUTS | CLONE_NEWNS | SIGCHLD, opt);
-
-    if (pid == -1)
+    runtime_request req = 
     {
-        perror("clone");
-        return 1;
-    }
+        .type = RT_RUN,
+        .run = 
+        {
+            .program = opt->name
+        }
+    };
 
-    int status;
-    waitpid(pid, &status, 0);
-    printf("Dziecko zakonczylo ze statusem %d\n", status);
+    exec_runtime(&req);
 
     puts("Run handler ends");
 

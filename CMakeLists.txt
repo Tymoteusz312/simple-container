@@ -8,6 +8,22 @@ set(CMAKE_C_EXTENSIONS ON)
 
 project(simple-container)
 
-include_directories(simple-container include)
+add_library(libsc STATIC 
+    src/libsc/runtime.c
+)
 
-add_executable(simple-container src/main.c src/dispacher.c src/commands_registry.c src/commands/run.c src/commands/create.c src/opt_parser.c src/core.c)
+target_include_directories(runtime PUBLIC ${CMAKE_SOURCE_DIR}/include/runtime)
+
+add_executable(sc 
+    src/cli/main.c 
+    src/cli/dispacher.c 
+    src/cli/commands_registry.c 
+    src/cli/commands/run.c 
+    src/cli/commands/create.c 
+    src/cli/opt_parser.c 
+    src/cli/core.c
+)
+
+target_include_directories(sc PUBLIC ${CMAKE_SOURCE_DIR}/include/cli ${CMAKE_SOURCE_DIR}/include)
+
+target_link_libraries(sc PRIVATE libsc)

@@ -1,44 +1,50 @@
 [
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/main.c.o -c /home/tymoteusz/Projects/simple-container/src/main.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/main.c",
-  "output": "CMakeFiles/simple-container.dir/src/main.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/runtime.dir/src/runtime/runtime.c.o -c /home/tymoteusz/Projects/simple-container/src/runtime/runtime.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/runtime/runtime.c",
+  "output": "CMakeFiles/runtime.dir/src/runtime/runtime.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/dispacher.c.o -c /home/tymoteusz/Projects/simple-container/src/dispacher.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/dispacher.c",
-  "output": "CMakeFiles/simple-container.dir/src/dispacher.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/main.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/main.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/main.c",
+  "output": "CMakeFiles/sc.dir/src/cli/main.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/commands_registry.c.o -c /home/tymoteusz/Projects/simple-container/src/commands_registry.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/commands_registry.c",
-  "output": "CMakeFiles/simple-container.dir/src/commands_registry.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/dispacher.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/dispacher.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/dispacher.c",
+  "output": "CMakeFiles/sc.dir/src/cli/dispacher.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/commands/run.c.o -c /home/tymoteusz/Projects/simple-container/src/commands/run.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/commands/run.c",
-  "output": "CMakeFiles/simple-container.dir/src/commands/run.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/commands_registry.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/commands_registry.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/commands_registry.c",
+  "output": "CMakeFiles/sc.dir/src/cli/commands_registry.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/commands/create.c.o -c /home/tymoteusz/Projects/simple-container/src/commands/create.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/commands/create.c",
-  "output": "CMakeFiles/simple-container.dir/src/commands/create.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/commands/run.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/commands/run.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/commands/run.c",
+  "output": "CMakeFiles/sc.dir/src/cli/commands/run.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/opt_parser.c.o -c /home/tymoteusz/Projects/simple-container/src/opt_parser.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/opt_parser.c",
-  "output": "CMakeFiles/simple-container.dir/src/opt_parser.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/commands/create.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/commands/create.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/commands/create.c",
+  "output": "CMakeFiles/sc.dir/src/cli/commands/create.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/simple-container -I/home/tymoteusz/Projects/simple-container/include -std=gnu11 -o CMakeFiles/simple-container.dir/src/core.c.o -c /home/tymoteusz/Projects/simple-container/src/core.c",
-  "file": "/home/tymoteusz/Projects/simple-container/src/core.c",
-  "output": "CMakeFiles/simple-container.dir/src/core.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/opt_parser.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/opt_parser.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/opt_parser.c",
+  "output": "CMakeFiles/sc.dir/src/cli/opt_parser.c.o"
+},
+{
+  "directory": "/home/tymoteusz/Projects/simple-container",
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/include/cli -I/home/tymoteusz/Projects/simple-container/include -I/home/tymoteusz/Projects/simple-container/include/runtime -std=gnu11 -o CMakeFiles/sc.dir/src/cli/core.c.o -c /home/tymoteusz/Projects/simple-container/src/cli/core.c",
+  "file": "/home/tymoteusz/Projects/simple-container/src/cli/core.c",
+  "output": "CMakeFiles/sc.dir/src/cli/core.c.o"
 }
 ]
