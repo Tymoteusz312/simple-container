@@ -16,7 +16,7 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 
-#include "runtime/runtime.h"
+#include "libsc/runtime.h"
 
 #define STACK_SIZE (1024 * 1024)
 
