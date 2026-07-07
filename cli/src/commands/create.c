@@ -1,15 +1,10 @@
 #include "commands/create.h"
 
 
-#include "request_type.h"
 #define _GNU_SOURCE
 #define _DEFAULT_SOURCE
 
-#include "core.h"
 #include "opt_parser.h"
-
-#include <stdio.h>
-
 #include "libsc/image.h"
 
 typedef struct 
@@ -40,8 +35,6 @@ const command create_command=
 
 int create_parser(context* ctx)
 {
-    puts("Parsowanie create!");
-
     token* tokens = ctx->tokens;
     int tokens_size = ctx->tokens_size;
 
@@ -50,7 +43,6 @@ int create_parser(context* ctx)
     opt->name = pos_str(ctx);
     opt->rootfs_path = pos_str(ctx);
 
-    puts("Parsowanie create zakonczone");
     return 0;
 }
 
@@ -59,13 +51,10 @@ int create_parser(context* ctx)
 
 int create_handler(context* ctx)
 {
-    puts("Run Handler");
 
     create_opt_t* opt = (create_opt_t*)(ctx->data);
 
     sc_create_image(opt->name, opt->rootfs_path);
-
-    puts("Run handler ends");
 
     return 0;
 }
