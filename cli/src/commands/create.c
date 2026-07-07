@@ -1,5 +1,6 @@
 #include "commands/create.h"
 
+#include "core.h"
 
 #define _GNU_SOURCE
 #define _DEFAULT_SOURCE

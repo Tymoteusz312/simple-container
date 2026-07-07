@@ -13,6 +13,9 @@ add_library(libsc STATIC
     libsc/src/image.c
     libsc/src/storage.c
     libsc/src/utils.c
+    libsc/src/fsystem.c
+    libsc/src/list.c
+    libsc/src/inspect.c
 )
 
 target_include_directories(libsc PUBLIC ${CMAKE_SOURCE_DIR}/libsc/include/libsc)
@@ -23,6 +26,8 @@ add_executable(sc
     cli/src/commands_registry.c 
     cli/src/commands/run.c 
     cli/src/commands/create.c 
+    cli/src/commands/list.c
+    cli/src/commands/inspect.c
     cli/src/opt_parser.c 
     cli/src/core.c
 )

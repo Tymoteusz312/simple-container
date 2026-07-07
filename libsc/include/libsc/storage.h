@@ -1,6 +1,9 @@
 #pragma once
 
-#define MAX_PATH_LEN 256
+#include <limits.h>
+
+
+#define MAX_PATH_LEN PATH_MAX
 
 int storage_init();
 int storage_bootstrap();

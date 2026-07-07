@@ -1,6 +1,7 @@
 #include "image.h"
 
 #include "storage.h"
+#include "fsystem.h"
 
 #include <pwd.h>
 #include <unistd.h>
@@ -9,112 +10,35 @@
 #include <stdio.h>
 #include <string.h>
 
-// TO potem chyba przeniesc gdzies indziej
-#include <dirent.h>
+// TO potem do innego pliku
+
 #include <fcntl.h>
-#define BUFFER_SIZE 65536
 
-int copy_file(const char* src_path, const char* dest_path)
+int image_write_metadata(const char* path, const char* name, const char* rootfs)
 {
-    int sfd = open(src_path, O_RDONLY);
-    int fd = open(dest_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
-    char buf[BUFFER_SIZE];
-
-    ssize_t bytes;
-
-    while ((bytes = read(sfd, buf, sizeof(buf))) > 0)
+    if (path == NULL || name == NULL || rootfs == NULL)
     {
-        ssize_t written = 0;
-
-        while (written < bytes)
-        {
-            ssize_t ret = write(fd, buf + written, bytes - written);
-
-            if (ret == -1)
-            {
-                perror("write");
-                close(sfd);
-                close(fd);
-                return 1;
-            }
-            written += ret;
-        }
+        return 1;
     }
+    
+    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0755);
 
-    if (bytes == -1)
+    if (fd == -1)
     {
-        perror("read");
+        perror("open");
         return 1;
     }
 
-    close(sfd);
+    char buf[512];
+
+    snprintf(buf, sizeof(buf), "NAME=%s\n", name);
+    write(fd, buf, strlen(buf));
+
+    snprintf(buf, sizeof(buf), "ROOTFS=%s\n", rootfs);
+    write(fd, buf, strlen(buf));
+
     close(fd);
-    
-    return 0;
-}
 
-int copy_symlink(const char* src_path, const char* dest_path)
-{
-    char target[MAX_PATH_LEN];
-
-    ssize_t len = readlink(src_path, target, sizeof(target)-1);
-
-    if (len == -1)
-    {
-        perror("readlink");
-        return 1;
-    }
-
-    target[len] = '\0';
-
-    if (symlink(target, dest_path) == -1)
-    {
-        perror("symlink");
-        return 1;
-    }
-
-    return 0;
-}
-
-int copy_dir(const char* src_path, const char* dest_path)
-{
-    DIR* directory = opendir(src_path);
-    
-    if (!directory)
-    {
-        perror("opendir");
-        return 1;
-    }
-
-    mkdir(dest_path, 0755);
-
-
-    struct dirent* entry;
-
-    while ((entry = readdir(directory)) != NULL)
-    {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-            continue;
-
-        char src[MAX_PATH_LEN];
-        snprintf(src, MAX_PATH_LEN, "%s/%s", src_path, entry->d_name);
-
-        char dest[MAX_PATH_LEN];
-        snprintf(dest, MAX_PATH_LEN, "%s/%s", dest_path, entry->d_name);
-        
-        struct stat st;
-        lstat(src, &st);
-
-        if (S_ISDIR(st.st_mode))
-            copy_dir(src, dest);
-        else if (S_ISREG(st.st_mode))
-            copy_file(src, dest);
-        else if (S_ISLNK(st.st_mode))
-            copy_symlink(src, dest);
-    }
-
-    closedir(directory);
     return 0;
 }
 
@@ -127,11 +51,18 @@ int sc_create_image(const char* image, const char* rootfs)
 
     storage_init();
 
-    char new_img_path[MAX_PATH_LEN];
     char rootfs_path[MAX_PATH_LEN];
 
-    snprintf(new_img_path, MAX_PATH_LEN, "%s/%s", storage_image_path(), image);
     snprintf(rootfs_path, MAX_PATH_LEN, "%s/%s", storage_rootfs_path(), rootfs);
+
+    char img_path[MAX_PATH_LEN];
+    char img_rootfs_path[MAX_PATH_LEN];
+    char img_config_path[MAX_PATH_LEN];
+
+    snprintf(img_path, MAX_PATH_LEN, "%s/%s", storage_image_path(), image);
+    snprintf(img_rootfs_path, MAX_PATH_LEN, "%s/%s", img_path, "rootfs");
+    snprintf(img_config_path, MAX_PATH_LEN, "%s/%s", img_path, "config.cfg");
+
 
     printf("Home path: %s\n", storage_home_path());
     printf("Image path: %s\n", storage_image_path());
@@ -144,7 +75,7 @@ int sc_create_image(const char* image, const char* rootfs)
     printf("Creating dir for image %s\n", image);
     // create_image_dir(image);
     //
-    if (access(new_img_path, F_OK) == 0)
+    if (access(img_path, F_OK) == 0)
     {
         fprintf(stderr, "Image named %s already exist\n", image);
         return 1;
@@ -156,8 +87,11 @@ int sc_create_image(const char* image, const char* rootfs)
         return 1;
     }
 
-    copy_dir(rootfs_path, new_img_path);
+    mkdir(img_path, 0755);
 
+    copy_dir(rootfs_path, img_rootfs_path);
+
+    image_write_metadata(img_config_path, image, rootfs);
     
 
     return 0;
