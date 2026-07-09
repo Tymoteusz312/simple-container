@@ -2,4 +2,4 @@
 
 #include <sys/stat.h>
 
-int mkdirp(const char* path, mode_t mode);
+int is_path_exist(const char* path);

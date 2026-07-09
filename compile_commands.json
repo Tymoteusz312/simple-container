@@ -1,9 +1,9 @@
 [
 {
   "directory": "/home/tymoteusz/Projects/simple-container",
-  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/libsc/include/libsc -std=gnu11 -o CMakeFiles/libsc.dir/libsc/src/runtime.c.o -c /home/tymoteusz/Projects/simple-container/libsc/src/runtime.c",
-  "file": "/home/tymoteusz/Projects/simple-container/libsc/src/runtime.c",
-  "output": "CMakeFiles/libsc.dir/libsc/src/runtime.c.o"
+  "command": "/usr/bin/clang  -I/home/tymoteusz/Projects/simple-container/libsc/include/libsc -std=gnu11 -o CMakeFiles/libsc.dir/libsc/src/run.c.o -c /home/tymoteusz/Projects/simple-container/libsc/src/run.c",
+  "file": "/home/tymoteusz/Projects/simple-container/libsc/src/run.c",
+  "output": "CMakeFiles/libsc.dir/libsc/src/run.c.o"
 },
 {
   "directory": "/home/tymoteusz/Projects/simple-container",

@@ -1,6 +1,6 @@
 #include "storage.h"
 
-#include "utils.h"
+#include "fsystem.h"
 
 #include <pwd.h>
 #include <unistd.h>
@@ -34,7 +34,19 @@ storage* storage_get()
 
 static const char* get_home()
 {
-    struct passwd* pw = getpwuid(getuid());
+    int uid = getuid();
+    struct passwd* pw;
+
+    if (uid == 0)
+    {
+        const char* username = getenv("SUDO_USER");
+        pw = getpwnam(username);
+    }
+    else
+    {
+        pw = getpwuid(uid);
+    }
+
 
     if (pw == NULL)
     {

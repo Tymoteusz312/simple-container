@@ -1,4 +1,3 @@
-#include "request_type.h"
 #define _GNU_SOURCE
 #define _DEFAULT_SOURCE
 #include "commands/run.h"
@@ -16,24 +15,23 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 
-#include "libsc/runtime.h"
+#include "libsc/run.h"
 
 #define STACK_SIZE (1024 * 1024)
 
 typedef struct 
 {
     const char* name;
-    const char* args_opt;
+    const char* program;
 } run_opt_t;
 
 option run_options[] = 
 {
-    {"args", "a", 1, "Arguments to pass to a new process"},
 };
 
 enum run_options_types
 {
-    ARGS_OPT = 0,
+    null,
 };
 
 const command run_command=
@@ -43,23 +41,19 @@ const command run_command=
     run_parser,
     &run_options[0],
     sizeof(run_options)/sizeof(run_options[0]),
-    1
+    2
 };
 
 int run_parser(context* ctx)
 {
-    puts("Parsowanie run!");
-
     token* tokens = ctx->tokens;
     int tokens_size = ctx->tokens_size;
 
     run_opt_t* opt = (run_opt_t*)(ctx->data);
 
-    opt->args_opt = opt_str(ctx, ARGS_OPT, "");
-    
     opt->name = pos_str(ctx);
+    opt->program = pos_str(ctx);
 
-    puts("Parsowanie run zakonczone");
     return 0;
 }
 
@@ -87,23 +81,14 @@ int child_fn(void* arg)
 
 int run_handler(context* ctx)
 {
-    puts("Run Handler");
-
     run_opt_t* opt = (run_opt_t*)(ctx->data);
 
-    runtime_request req = 
+    sc_run_opts opts = 
     {
-        .type = RT_RUN,
-        .run = 
-        {
-            .program = opt->name
-        }
+        .name = opt->name,
+        .program = opt->program
     };
-
-    exec_runtime(&req);
-
-    puts("Run handler ends");
-
+    sc_run(&opts);
     return 0;
 }
 

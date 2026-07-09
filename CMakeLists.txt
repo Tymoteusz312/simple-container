@@ -9,7 +9,7 @@ set(CMAKE_C_EXTENSIONS ON)
 project(simple-container)
 
 add_library(libsc STATIC 
-    libsc/src/runtime.c
+    libsc/src/run.c
     libsc/src/image.c
     libsc/src/storage.c
     libsc/src/utils.c

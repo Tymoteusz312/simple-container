@@ -2,6 +2,7 @@
 
 #include "storage.h"
 #include "fsystem.h"
+#include "utils.h"
 
 #include <pwd.h>
 #include <unistd.h>
@@ -75,13 +76,13 @@ int sc_create_image(const char* image, const char* rootfs)
     printf("Creating dir for image %s\n", image);
     // create_image_dir(image);
     //
-    if (access(img_path, F_OK) == 0)
+    if (is_path_exist(img_path))
     {
         fprintf(stderr, "Image named %s already exist\n", image);
         return 1;
     }
 
-    if (access(rootfs_path, F_OK) != 0)
+    if (is_path_exist(rootfs_path))
     {
         fprintf(stderr, "Rootfs named %s does't exist\n", rootfs);
         return 1;

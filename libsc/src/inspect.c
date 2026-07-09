@@ -1,6 +1,7 @@
 #include "inspect.h"
 
 #include "storage.h"
+#include "utils.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -23,7 +24,7 @@ int sc_inspect(sc_inspect_opts* opt)
 
     snprintf(path, MAX_PATH_LEN, "%s/%s/%s", storage_image_path(), opt->image_name, "config.cfg");
 
-    if (access(path, F_OK) != 0)
+    if (is_path_exist(path))
     {
         fprintf(stderr, "Image %s doesn't exist", opt->image_name);
     }
