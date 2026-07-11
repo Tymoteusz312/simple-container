@@ -6,7 +6,7 @@
 #define _DEFAULT_SOURCE
 
 #include "opt_parser.h"
-#include "libsc/image.h"
+#include "libsc/create.h"
 
 typedef struct 
 {

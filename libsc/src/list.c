@@ -16,14 +16,23 @@ int sc_list(list_opts* opt)
         return 1;
     }
 
-    storage_init();
+    // storage_init();
+    //
+    // const char* path;
+    //
+    // if (opt->show_bases_opt)
+    //     path = storage_rootfs_path();
+    // else
+    //     path = storage_image_path();
+    
+    path_storage st;
+    init_path_storage(&st, NULL, NULL, NULL);
 
     const char* path;
-
     if (opt->show_bases_opt)
-        path = storage_rootfs_path();
-    else
-        path = storage_image_path();
+        path = st.rootfs;
+    else 
+        path = st.images;
 
     DIR* directory = opendir(path);
 

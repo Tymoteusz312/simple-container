@@ -8,12 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <unistd.h>
-#include <sched.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
 
 #include "libsc/run.h"
 
@@ -23,15 +17,21 @@ typedef struct
 {
     const char* name;
     const char* program;
+
+    const char* mount_bind_opt;
+    const char* con_name_opt;
 } run_opt_t;
 
 option run_options[] = 
 {
+    {"mount-bind", "b", 1, "Specify what path do you want to bind. Format: --mount-bind <SRC>:<DEST>"},
+    {"name", "n", 1, "Specify name for container"},
 };
 
 enum run_options_types
 {
-    null,
+    MOUNT_BIND_OPT,
+    NAME_OPT
 };
 
 const command run_command=
@@ -54,28 +54,10 @@ int run_parser(context* ctx)
     opt->name = pos_str(ctx);
     opt->program = pos_str(ctx);
 
+    opt->mount_bind_opt = opt_str(ctx, MOUNT_BIND_OPT, NULL);
+    opt->con_name_opt = opt_str(ctx, NAME_OPT, NULL);
+
     return 0;
-}
-
-
-int child_fn(void* arg)
-{
-    run_opt_t* opt = arg;
-
-    const char* const name = "container";
-
-    sethostname(name, strlen(name));
-
-    mkdir("/proc", 0555);
-
-    mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL);
-    mount("proc", "/proc", "proc", 0, NULL);
-
-
-    execvp(opt->name, NULL);
-
-    perror("execvp");
-    _exit(1);
 }
 
 
@@ -86,8 +68,11 @@ int run_handler(context* ctx)
     sc_run_opts opts = 
     {
         .name = opt->name,
-        .program = opt->program
+        .program = opt->program,
+        .mount_bind_opt = opt->mount_bind_opt,
+        .con_name_opt = opt->con_name_opt
     };
+
     sc_run(&opts);
     return 0;
 }

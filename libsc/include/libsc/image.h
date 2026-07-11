@@ -1,4 +1,5 @@
 #pragma once
+#include "storage.h"
 
-
-int sc_create_image(const char* image, const char* rootfs_path);
+int create_image(path_storage* st);
+int image_write_metadata(const char* path, const char* name, const char* rootfs);

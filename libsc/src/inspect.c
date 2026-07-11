@@ -1,15 +1,22 @@
 #include "inspect.h"
 
+#include "config.h"
 #include "storage.h"
-#include "utils.h"
 
-#include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <unistd.h>
 #include <fcntl.h>
 
+void bind(const char* path)
+{
+    char src[MAX_PATH_LEN];
+    char dest[MAX_PATH_LEN];
+
+    sscanf(path, "%63[^:]:%63s", src, dest);
+
+    printf("Binding %s -> %s\n", src, dest);
+}
 
 int sc_inspect(sc_inspect_opts* opt)
 {
@@ -18,18 +25,10 @@ int sc_inspect(sc_inspect_opts* opt)
         return 1;
     }
 
-    storage_init();
+    path_storage st;
+    init_path_storage(&st, opt->image_name, NULL, NULL);
 
-    char path[MAX_PATH_LEN];
-
-    snprintf(path, MAX_PATH_LEN, "%s/%s/%s", storage_image_path(), opt->image_name, "config.cfg");
-
-    if (is_path_exist(path))
-    {
-        fprintf(stderr, "Image %s doesn't exist", opt->image_name);
-    }
-
-    int fd = open(path, O_RDONLY);
+    int fd = open(st.image.config, O_RDONLY);
 
     if (fd == -1)
     {
@@ -37,14 +36,19 @@ int sc_inspect(sc_inspect_opts* opt)
         return 1;
     }
 
-    char buf[512];
+    config cfg;
+    if (config_parse(&cfg, st.image.config))
+    {
+        fprintf(stderr, "Error while parsing config file\n");
+        return -1;
+    }
 
-    read(fd, buf, 512);
+    config_for_each(&cfg, "BIND", bind);
 
-    close(fd);
-
-    puts(buf);
 
     return 0;
 }
+
+
+
 

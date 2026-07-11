@@ -1,0 +1,122 @@
+#include "config.h"
+
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <sys/stat.h>
+
+#include "utils.h"
+
+
+#define BUFFER_SIZE 65536
+
+int is_white_ch(int ch)
+{
+    return ch == ' ' || ch == '\t' || ch == '\n';
+}
+
+int eat_white_ch(const char* str)
+{
+    int count = 0;
+    while (is_white_ch(*str))
+    {
+        ++str;
+        ++count;
+    }
+    return count;
+}
+
+int get_val(char* result, const char* ch, const char* end)
+{
+    int stride = eat_white_ch(ch);
+    ch += stride;
+
+    char buf[MAX_KEY_LENGTH];
+    int len = 0;
+
+    while (!is_white_ch(*ch) && *ch != '=' && ch < end)
+        buf[len++] = *(ch++);
+
+    stride += len;
+
+    buf[len] = '\0';
+    strlcpy(result, buf, MAX_KEY_LENGTH);
+
+    return stride;
+}
+
+
+
+
+int get_config(config* cfg, const char* path)
+{
+    if (cfg == NULL)
+    {
+        fprintf(stderr, "Config cant be NULL]\n");
+        return -1;
+    }
+    if (path == NULL)
+    {
+        fprintf(stderr, "Path cant be NULL]\n");
+        return -1;
+    }
+
+    if (!is_path_exist(path))
+    {
+        fprintf(stderr, "File %s doesn't exist\n", path);
+        return -1;
+    }
+
+    cfg->path = path; 
+    cfg->count = 0;
+
+    int fd = open(path, O_RDONLY);
+
+    if (fd == -1)
+    {
+        perror("get config open");
+        return -1;
+    }
+
+    char buf[BUFFER_SIZE];
+    ssize_t bytes = 0;
+
+    enum stage
+    {
+        KEY,
+        ASSIGN,
+        VALUE,
+        NLINE,
+        SIZE
+    } parse_stage = KEY;
+
+    while((bytes = read(fd, buf, BUFFER_SIZE)) > 0)
+    {
+        int i = 0;
+        while (i < bytes)
+        {
+            get_key();
+            eat_delimiter();
+            get_val();
+        }
+    }
+
+    if (bytes == -1)
+    {
+        perror("read");
+        return -1;
+    }
+
+    close(fd);
+
+    for (int i = 0; i < cfg->count; ++i)
+    {
+        printf("Option %s = %s\n", cfg->keys[i], cfg->vars[i]);
+    }
+
+    return 0;
+}
+
+

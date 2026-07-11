@@ -1,5 +1,6 @@
 #include "run.h"
 
+#include "container.h"
 #include "storage.h"
 #include "utils.h"
 
@@ -16,67 +17,92 @@ int sc_run(sc_run_opts* opt)
         return 1;
     }
 
-    storage_init();
-
-    char image_path[MAX_PATH_LEN];
-
-    snprintf(image_path, MAX_PATH_LEN, "%s/%s/rootfs", storage_image_path(), opt->name);
-    puts(image_path);
+    if (opt->con_name_opt == NULL)
+    {
+        opt->con_name_opt = "container";
+    }
     
-    if (is_path_exist(image_path))
+    path_storage st;
+    init_path_storage(&st, opt->name, opt->con_name_opt, NULL);
+    
+    if (!is_path_exist(st.image.rootfs))
     {
         fprintf(stderr, "Image %s doesn't exist\n", opt->name);
         return 1;
     }
 
-    pid_t pid = fork();
-
-    if (pid == -1)
+    if (is_path_exist(st.container.base))
     {
-        perror("fork");
+        fprintf(stderr, "Container %s already exist\n", opt->con_name_opt);
         return 1;
     }
 
-    if (pid == 0)
+    if (create_container(&st))
     {
-
-        if (sethostname(opt->name, sizeof(opt->name)) == -1)
-        {
-            perror("sethostname");
-            return 1;
-        }
-
-        if (chroot(image_path) == -1)
-        {
-            perror("chroot");
-            return 1;
-        }
-
-        if (chdir("/") == -1)
-        {
-            perror("chdir");
-            return 1;
-        }
-
-        const char* const argv[] = 
-        {
-            opt->program,
-            NULL
-        };
-
-        const char* const env[] = 
-        {
-            "PS1=[\\u@\\h \\w]\\$ ",
-            "PATH=/bin:/sbin:/usr/bin:/usr/sbin",
-            NULL
-        };
-
-        execve(opt->program, argv, env);
-
-        perror("execv");
+        fprintf(stderr, "Cannot craete container");
         return 1;
     }
 
-    waitpid(pid, NULL, 0);
+    // if (opt->mount_bind_opt != NULL)
+    // {
+    //     char key[64];
+    //     char val[256];
+    //
+    //     sscanf(opt->mount_bind_opt, "%63[^:]:%255s", key, val);
+    //
+    //     printf("Mount bind option was specifed key=\"%s\", val=\"%s\"\n", key, val);
+    //
+    //
+    // }
+
+    // pid_t pid = fork();
+    //
+    // if (pid == -1)
+    // {
+    //     perror("fork");
+    //     return 1;
+    // }
+    //
+    // if (pid == 0)
+    // {
+    //
+    //     if (sethostname(opt->name, sizeof(opt->name)) == -1)
+    //     {
+    //         perror("sethostname");
+    //         return 1;
+    //     }
+    //
+    //     if (chroot(st.image.rootfs) == -1)
+    //     {
+    //         perror("chroot");
+    //         return 1;
+    //     }
+    //
+    //     if (chdir("/") == -1)
+    //     {
+    //         perror("chdir");
+    //         return 1;
+    //     }
+    //
+    //     char* const argv[] = 
+    //     {
+    //         opt->program,
+    //         NULL
+    //     };
+    //
+    //     char* const env[] = 
+    //     {
+    //         "PS1=[\\u@\\h \\w]\\$ ",
+    //         "PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+    //         NULL
+    //     };
+    //
+    //     execve(opt->program, argv, env);
+    //
+    //     perror("execv");
+    //     return 1;
+    // }
+    //
+    // waitpid(pid, NULL, 0);
     return 0;   
 }

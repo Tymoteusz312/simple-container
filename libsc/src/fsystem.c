@@ -28,6 +28,7 @@ int mkdirp(const char* path, mode_t mode)
 
     if (len >= sizeof(tmp))
     {
+        
         fprintf(stderr, "Path too long\n");
         return -1;
     }
@@ -78,8 +79,8 @@ int copy_file(const char* src_path, const char* dest_path, mode_t mode)
         return 1;
     }
 
-    printf("copy: %s -> %s\n", src_path, dest_path);
-    fflush(stdout);
+    // printf("copy: %s -> %s\n", src_path, dest_path);
+    // fflush(stdout);
 
     char buf[BUFFER_SIZE];
 
@@ -109,6 +110,7 @@ int copy_file(const char* src_path, const char* dest_path, mode_t mode)
         perror("read");
         return 1;
     }
+
 
     close(sfd);
     close(fd);

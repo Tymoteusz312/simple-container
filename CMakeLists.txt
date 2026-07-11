@@ -16,6 +16,9 @@ add_library(libsc STATIC
     libsc/src/fsystem.c
     libsc/src/list.c
     libsc/src/inspect.c
+    libsc/src/container.c
+    libsc/src/create.c
+    libsc/src/config.c
 )
 
 target_include_directories(libsc PUBLIC ${CMAKE_SOURCE_DIR}/libsc/include/libsc)
