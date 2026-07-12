@@ -1,22 +1,12 @@
 #include "inspect.h"
 
-#include "config.h"
+#include "kvparser.h"
 #include "storage.h"
 
 #include <stdio.h>
 
 #include <unistd.h>
 #include <fcntl.h>
-
-void bind(const char* path)
-{
-    char src[MAX_PATH_LEN];
-    char dest[MAX_PATH_LEN];
-
-    sscanf(path, "%63[^:]:%63s", src, dest);
-
-    printf("Binding %s -> %s\n", src, dest);
-}
 
 int sc_inspect(sc_inspect_opts* opt)
 {
@@ -36,16 +26,15 @@ int sc_inspect(sc_inspect_opts* opt)
         return 1;
     }
 
-    config cfg;
-    if (config_parse(&cfg, st.image.config))
+    kv_map kv;
+
+    kv_load(&kv, st.image.config);
+
+    
+    for (int i = 0; i < kv.count; ++i)
     {
-        fprintf(stderr, "Error while parsing config file\n");
-        return -1;
+        printf("%s = %s\n", kv.keys[i], kv.vars[i]);
     }
-
-    config_for_each(&cfg, "BIND", bind);
-
-
     return 0;
 }
 

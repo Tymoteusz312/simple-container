@@ -5,6 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_BUILD_TYPE Debug)
 
 project(simple-container)
 
@@ -18,7 +19,7 @@ add_library(libsc STATIC
     libsc/src/inspect.c
     libsc/src/container.c
     libsc/src/create.c
-    libsc/src/config.c
+    libsc/src/kvparser.c
 )
 
 target_include_directories(libsc PUBLIC ${CMAKE_SOURCE_DIR}/libsc/include/libsc)

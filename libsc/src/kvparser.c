@@ -1,4 +1,4 @@
-#include "config.h"
+#include "kvparser.h"
 
 #include "utils.h"
 #include <fcntl.h>
@@ -10,12 +10,12 @@
 
 #define BUFFER_SIZE 65536
 
-int is_white_ch(int ch)
+static int is_white_ch(int ch)
 {
     return ch == ' ' || ch == '\t' || ch == '\n';
 }
 
-const char*  eat_white_ch(const char* str, const char* end)
+static const char*  eat_white_ch(const char* str, const char* end)
 {
     while (str < end && is_white_ch(*str))
         ++str;
@@ -38,9 +38,9 @@ static const char* get_val(char* result, const char* ch, const char* end)
     return ch;
 }
 
-int config_parse(config* cfg, const char* path)
+int kv_parse(kv_map* kv, const char* path)
 {
-    if (cfg == NULL)
+    if (kv == NULL)
     {
         fprintf(stderr, "Config cant be NULL]\n");
         return -1;
@@ -57,8 +57,7 @@ int config_parse(config* cfg, const char* path)
         return -1;
     }
 
-    cfg->path = path; 
-    cfg->count = 0;
+    kv->count = 0;
 
     int fd = open(path, O_RDONLY);
 
@@ -77,14 +76,14 @@ int config_parse(config* cfg, const char* path)
         const char* p = buf;
         while (p < end)
         {
-            if (cfg->count >= MAX_OPTION)
+            if (kv->count >= MAX_OPTION)
             {
                 fprintf(stderr, "Too much variables\n");
                 return -1;
             } 
 
             p = eat_white_ch(p, end);
-            if ((p = get_val(cfg->keys[cfg->count], p, end)) == NULL)
+            if ((p = get_val(kv->keys[kv->count], p, end)) == NULL)
             {
                 fprintf(stderr, "Too long key");
                 return -1;
@@ -99,13 +98,13 @@ int config_parse(config* cfg, const char* path)
             ++p;
             
             p = eat_white_ch(p, end);
-            if ((p = get_val(cfg->vars[cfg->count], p, end)) == NULL)
+            if ((p = get_val(kv->vars[kv->count], p, end)) == NULL)
             {
                 fprintf(stderr, "Too long value");
                 return -1;
             }
 
-            ++(cfg->count);
+            ++(kv->count);
             p = eat_white_ch(p, end);
         }
     }
@@ -117,38 +116,89 @@ int config_parse(config* cfg, const char* path)
     }
 
     close(fd);
+    return 0;
+}
 
-    for (int i = 0; i < cfg->count; ++i)
+
+int kv_load(kv_map* kv, const char* path)
+{
+    if (kv_parse(kv, path) == -1)
     {
-        printf("Option %s = %s\n", cfg->keys[i], cfg->vars[i]);
+        fprintf(stderr, "Error during parsing file %s\n", path);
+        return -1;
     }
 
     return 0;
 }
 
 
-const char* config_get(config* cfg, const char* key)
+int kv_save(kv_map* kv, const char* path)
 {
-    if (cfg == NULL || key == NULL) return NULL;
+    if (kv == NULL || path == NULL) return -1;
 
-    for (int i = 0; i < cfg->count; ++i)
+    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+    if (fd == -1)
     {
-        if (strcmp(cfg->keys[i], key) == 0)
-            return cfg->vars[i];
+        perror("open");
+        return -1;
+    }
+
+    for (int i = 0; i < kv->count; ++i)
+    {
+        char buf[MAX_KEY_LENGTH + MAX_OPT_LENGTH + 2];
+        snprintf(buf, sizeof(buf), "%s=%s\n" ,kv->keys[i], kv->vars[i]);
+
+        if (write(fd, buf, strlen(buf)) == -1)
+        {
+            perror("write");
+            return -1;
+        }
+    }
+
+    close(fd);
+
+    return 0;
+}
+
+
+int kv_add(kv_map* kv, const char* key, const char* val)
+{
+    if (kv == NULL || key == NULL || val == NULL) return -1;
+
+    if (kv->count >= MAX_OPTION)
+        return -1;
+
+    int idx = kv->count++;
+
+    strlcpy(kv->keys[idx], key, MAX_KEY_LENGTH); 
+    strlcpy(kv->vars[idx], val, MAX_OPT_LENGTH); 
+
+    return 0;
+}
+
+const char* kv_get(kv_map* kv, const char* key)
+{
+    if (kv == NULL || key == NULL) return NULL;
+
+    for (int i = 0; i < kv->count; ++i)
+    {
+        if (strcmp(kv->keys[i], key) == 0)
+            return kv->vars[i];
     }
     return NULL;
 }
 
-int config_for_each(config* cfg, const char* name, cfg_action  action)
+int kv_for_each(kv_map* kv, const char* name, kv_action action)
 {
-    if (cfg == NULL || name == NULL || action == NULL) return -1;
+    if (kv == NULL || name == NULL || action == NULL) return -1;
 
     int counter = 0;
-    for (int i = 0; i < cfg->count; ++i)
+    for (int i = 0; i < kv->count; ++i)
     {
-        if (strcmp(cfg->keys[i], name) == 0)
+        if (strcmp(kv->keys[i], name) == 0)
         {
-            action(cfg->vars[i]);
+            action(kv->vars[i]);
             ++counter;
         }
     }

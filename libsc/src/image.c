@@ -4,8 +4,7 @@
 #include "fsystem.h"
 
 #include <stdio.h>
-#include <string.h>
-
+#include "kvparser.h"
 #include <unistd.h>
 #include <sys/stat.h>
 
@@ -31,27 +30,14 @@ int image_write_metadata(const char* path, const char* name, const char* rootfs)
     {
         return 1;
     }
+
+    kv_map kv = {0};
+
+    kv_add(&kv, "NAME", name);
+    kv_add(&kv, "ROOTFS", rootfs);
+    kv_add(&kv, "PATH", "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin");
+
+    kv_save(&kv, path);
     
-    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0755);
-
-    if (fd == -1)
-    {
-        perror("write metadat open");
-        return 1;
-    }
-
-    char buf[512];
-
-    snprintf(buf, sizeof(buf), "NAME=%s\n", name);
-    write(fd, buf, strlen(buf));
-
-    snprintf(buf, sizeof(buf), "ROOTFS=%s\n", rootfs);
-    write(fd, buf, strlen(buf));
-
-    snprintf(buf, sizeof(buf), "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin");
-    write(fd, buf, strlen(buf));
-
-    close(fd);
-
     return 0;
 }
