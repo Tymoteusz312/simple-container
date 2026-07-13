@@ -66,6 +66,7 @@ int init_path_storage(path_storage* st, const char* image_name, const char* cont
         snprintf(st->container.upper, MAX_PATH_LEN, "%s/upper", st->container.base);
         snprintf(st->container.lower, MAX_PATH_LEN, "%s/lower", st->container.base);
         snprintf(st->container.merged, MAX_PATH_LEN, "%s/megred", st->container.base);
+        snprintf(st->container.work, MAX_PATH_LEN, "%s/workdir", st->container.base);
     }
 
     if (rootfs_name != NULL)

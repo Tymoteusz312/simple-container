@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/mount.h>
 
 #include <stdio.h>
 
@@ -42,6 +43,74 @@ int sc_run(sc_run_opts* opt)
         fprintf(stderr, "Cannot craete container");
         return 1;
     }
+
+    char mount_data[4096];
+
+    snprintf(mount_data, sizeof(mount_data), 
+            "lowerdir=%s,"
+            "upperdir=%s,"
+            "workdir=%s",
+            st.image.rootfs,
+            st.container.upper,
+            st.container.work
+            );
+
+    if (mount("overlay", st.container.merged, "overlay", 0, mount_data) == -1)
+    {
+        perror("mount");
+        return 1;
+    }
+
+    pid_t pid = fork();
+
+    if (pid == -1)
+    {
+        perror("fork");
+        return 1;
+    }
+
+    if (pid == 0)
+    {
+
+        if (sethostname(opt->name, sizeof(opt->name)) == -1)
+        {
+            perror("sethostname");
+            return 1;
+        }
+
+        if (chroot(st.container.merged) == -1)
+        {
+            perror("chroot");
+            return 1;
+        }
+
+        if (chdir("/") == -1)
+        {
+            perror("chdir");
+            return 1;
+        }
+
+        char* const argv[] = 
+        {
+            opt->program,
+            NULL
+        };
+
+        char* const env[] = 
+        {
+            "PS1=[\\u@\\h \\w]\\$ ",
+            "PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+            NULL
+        };
+
+        execve(opt->program, argv, env);
+
+        perror("execv");
+        return 1;
+    }
+
+    waitpid(pid, NULL, 0);
+    
 
     // if (opt->mount_bind_opt != NULL)
     // {

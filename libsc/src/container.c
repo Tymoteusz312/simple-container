@@ -12,9 +12,9 @@ int create_container(path_storage* st)
 
     mkdirp(st->container.base, 0755);
 
-    mkdir(st->container.lower, 0755);
     mkdir(st->container.upper, 0755);
     mkdir(st->container.merged, 0755);
+    mkdir(st->container.work, 0755);
     
     return 0;
 }

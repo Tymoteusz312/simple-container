@@ -17,6 +17,7 @@ typedef struct
     char rootfs[MAX_PATH_LEN];
     char upper[MAX_PATH_LEN];
     char lower[MAX_PATH_LEN];
+    char work[MAX_PATH_LEN];
     char merged[MAX_PATH_LEN];
 } container_path;
 
